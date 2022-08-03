@@ -1,0 +1,80 @@
+name: "publish rendered docs"
+description: "accepts openapi 3 yaml definition, renders it and publishes it"
+
+inputs:
+  doc_file_name:
+    description: "file name containing openapi definitions"
+    default: "docs.yaml"
+    required: false
+  service_name:
+    description: "name of the service for which the docs are generated"
+    required: false
+  include_latest:
+    description: "whether to also push this docs as latest version"
+    required: false
+    default: "true"
+  google_secret:
+    description: "google credentials which write and delete access (for replacing latest)"
+    required: true
+
+runs:
+  using: "composite"
+  steps:
+    - name: "download docs artifact"
+      uses: actions/download-artifact@v3
+      with:
+        name: ${{ inputs.doc_file_name }}
+
+    - name: "normalize the name of the doc"
+      run: cp ${{ inputs.doc_file_name }} docs.yaml
+      shell: bash
+
+    - name: "get or generate service name"
+      run: |
+        if [ -z ${{ inputs.service-name }} ];
+          then echo "SERVICE_NAME=$(echo '${{ github.repository }}' | awk -F '/' '{print $2}')" >> $GITHUB_ENV;
+          else echo "SERVICE_NAME=$(echo '${{ inputs.service_name }}')";
+        fi
+      shell: bash
+
+#     required? by node cache
+    - run: "touch package-lock.json"
+      shell: bash
+
+    - uses: actions/setup-node@v3
+      with:
+        node-version: 16
+        cache: 'npm'
+
+    - name: "build redocly docs"
+      run: "npx redoc-cli build --output index.html docs.yaml"
+      shell: bash
+
+    - name: "auth to google"
+      uses: "google-github-actions/auth@v0"
+      with:
+        credentials_json: "${{ inputs.google_secret }}"
+        create_credentials_file: true
+
+    - name: "generate destination folder"
+      run: echo "DESTINATION_VER=chilipiper_backend_docs/$SERVICE_NAME/$GITHUB_REF_NAME" >> $GITHUB_ENV
+      shell: bash
+
+    - name: 'upload docs versioned'
+      uses: 'google-github-actions/upload-cloud-storage@v0'
+      with:
+        path: 'index.html'
+        destination: ${{ env.DESTINATION_VER }}
+
+    - name: "generate latest folder"
+      if: ${{ inputs.include_latest }} == 'true'
+      run: echo "DESTINATION_LATEST=chilipiper_backend_docs/$SERVICE_NAME/latest" >> $GITHUB_ENV
+      shell: bash
+
+    - name: 'upload docs latest'
+      if: ${{ inputs.include_latest }} == 'true'
+      uses: 'google-github-actions/upload-cloud-storage@v0'
+      with:
+        path: 'index.html'
+        destination: ${{ env.DESTINATION_VER }}
+
