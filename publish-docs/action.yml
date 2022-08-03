@@ -79,5 +79,5 @@ runs:
       uses: 'google-github-actions/upload-cloud-storage@v0'
       with:
         path: 'index.html'
-        destination: ${{ env.DESTINATION_VER }}
+        destination: ${{ env.DESTINATION_LATEST }}
 
