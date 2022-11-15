@@ -26,10 +26,7 @@ runs:
         name: ${{ inputs.doc_file_name }}
 
     - name: "normalize the name of the doc"
-      run: |
-        if [ inputs.doc_file_name != "docs.yaml" ];
-          then cp ${{ inputs.doc_file_name }} docs.yaml;
-        fi
+      run: cp ${{ inputs.doc_file_name }} docs.yaml || true;
       shell: bash
 
     - name: "get or generate service name"
