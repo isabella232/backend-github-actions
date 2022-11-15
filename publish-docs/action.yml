@@ -25,10 +25,6 @@ runs:
       with:
         name: ${{ inputs.doc_file_name }}
 
-    - name: "normalize the name of the doc"
-      run: cp ${{ inputs.doc_file_name }} docs.yaml || true;
-      shell: bash
-
     - name: "get or generate service name"
       run: |
         if [ -z ${{ inputs.service-name }} ];
@@ -47,7 +43,7 @@ runs:
         cache: 'npm'
 
     - name: "build redocly docs"
-      run: "npx redoc-cli build --output index.html docs.yaml"
+      run: "npx redoc-cli build --output index.html ${{ inputs.doc_file_name }}"
       shell: bash
 
     - name: "auth to google"
