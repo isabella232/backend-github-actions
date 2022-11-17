@@ -6,6 +6,9 @@ inputs:
     description: "file name containing openapi definitions"
     default: "docs.yaml"
     required: false
+  redoc_file_name: "file name containing published redoc"
+    required: false
+    default: "index.html"
   service_name:
     description: "name of the service for which the docs are generated"
     required: false
@@ -43,7 +46,7 @@ runs:
         cache: 'npm'
 
     - name: "build redocly docs"
-      run: "npx redoc-cli build --output index.html ${{ inputs.doc_file_name }}"
+      run: "npx redoc-cli build --output ${{ inputs.redoc_file_name }} ${{ inputs.doc_file_name }}"
       shell: bash
 
     - name: "auth to google"
@@ -59,7 +62,7 @@ runs:
     - name: 'upload docs versioned'
       uses: 'google-github-actions/upload-cloud-storage@v0'
       with:
-        path: 'index.html'
+        path: ${{ inputs.redoc_file_name }}
         destination: ${{ env.DESTINATION_VER }}
 
     - name: "generate latest folder"
@@ -71,6 +74,6 @@ runs:
       if: ${{ inputs.include_latest }} == 'true'
       uses: 'google-github-actions/upload-cloud-storage@v0'
       with:
-        path: 'index.html'
+        path: ${{ inputs.redoc_file_name }}
         destination: ${{ env.DESTINATION_LATEST }}
 
