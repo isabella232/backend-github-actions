@@ -6,9 +6,10 @@ inputs:
     description: "file name containing openapi definitions"
     default: "docs.yaml"
     required: false
-  redoc_file_name: "file name containing published redoc"
-    required: false
+  redoc_file_name: 
+    description: "file name containing published redoc"
     default: "index.html"
+    required: false
   service_name:
     description: "name of the service for which the docs are generated"
     required: false
