@@ -84,7 +84,7 @@ runs:
     - name: Repository Dispatch
         uses: peter-evans/repository-dispatch@v2
         with:
-          token: ${{ secrets.PAT }}
+          token: ${{ inputs.github_pat }}
           repository: Chili-Piper/frontend
           event-type: update-api-client-docs
           client-payload: '{"service": "${{ env.SERVICE_NAME }}", "version": "${{ env.DESTINATION_VER }}"}'
