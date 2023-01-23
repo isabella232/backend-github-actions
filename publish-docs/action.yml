@@ -20,6 +20,9 @@ inputs:
   google_secret:
     description: "google credentials which write and delete access (for replacing latest)"
     required: true
+  github_pat:
+    description: "PAT used to trigger repository-dispatch in FE repo"
+    required: true
 
 runs:
   using: "composite"
@@ -77,4 +80,12 @@ runs:
       with:
         path: ${{ inputs.redoc_file_name }}
         destination: ${{ env.DESTINATION_LATEST }}
+
+    - name: Repository Dispatch
+        uses: peter-evans/repository-dispatch@v2
+        with:
+          token: ${{ secrets.PAT }}
+          repository: Chili-Piper/frontend
+          event-type: update-api-client-docs
+          client-payload: '{"service": "${{ env.SERVICE_NAME }}", "version": "${{ env.DESTINATION_VER }}"}'
 
