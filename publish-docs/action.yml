@@ -79,10 +79,10 @@ runs:
         destination: ${{ env.DESTINATION_LATEST }}
 
     - name: Repository Dispatch
-        uses: peter-evans/repository-dispatch@v2
-        with:
-          token: ${{ secrets.REPOSITORY_DISPATCH_PAT }}
-          repository: Chili-Piper/frontend
-          event-type: update-api-client-docs
-          client-payload: '{"service": "${{ env.SERVICE_NAME }}", "version": "${{ env.DESTINATION_VER }}"}'
+      uses: peter-evans/repository-dispatch@v2
+      with:
+        token: ${{ secrets.REPOSITORY_DISPATCH_PAT }}
+        repository: Chili-Piper/frontend
+        event-type: update-api-client-docs
+        client-payload: '{"service": "${{ env.SERVICE_NAME }}", "version": "${{ env.DESTINATION_VER }}"}'
 
