@@ -87,5 +87,5 @@ runs:
         token: ${{ inputs.github_pat }}
         repository: Chili-Piper/frontend
         event-type: update-api-client-docs
-        client-payload: '{"service": "${{ env.SERVICE_NAME }}", "version": "${{ env.DESTINATION_VER }}"}'
+        client-payload: '{"service": "${{ env.SERVICE_NAME }}", "version": "${{ env.GITHUB_REF_NAME }}", "file": "${{ inputs.redoc_file_name }}"}'
 
