@@ -40,6 +40,11 @@ runs:
         fi
       shell: bash
 
+    - name: "get service version"
+      run: |
+        echo "SERVICE_VERSION=$GITHUB_REF_NAME" >> $GITHUB_ENV;
+      shell: bash
+
 #     required? by node cache
     - run: "touch package-lock.json"
       shell: bash
@@ -87,5 +92,5 @@ runs:
         token: ${{ inputs.github_pat }}
         repository: Chili-Piper/frontend
         event-type: update-api-client-docs
-        client-payload: '{"service": "${{ env.SERVICE_NAME }}", "version": "${{ env.GITHUB_REF_NAME }}", "file": "${{ inputs.redoc_file_name }}"}'
+        client-payload: '{"service": "${{ env.SERVICE_NAME }}", "version": "${{ env.SERVICE_VERSION }}", "file": "${{ inputs.redoc_file_name }}"}'
 
